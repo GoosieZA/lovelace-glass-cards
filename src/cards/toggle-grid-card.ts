@@ -66,7 +66,7 @@ export class GlassToggleGridCard extends LitElement implements LovelaceCard {
     return html`
       <div class="card">
         ${this._config.title ? html`<div class="hdr"><div class="hdr-l">${icon('grid_view', 20, 'var(--g-amber)')}<span class="title">${this._config.title}</span></div></div>` : nothing}
-        <div class="grid" style="grid-template-columns:repeat(${this._config.columns}, 1fr)">
+        <div class="grid" style="grid-template-columns:repeat(${this._config.columns}, minmax(0, 1fr))">
           ${this._items.map((it) => {
             const st = this.hass!.states[it.entity];
             const on = st && (st.state === 'on' || st.state === 'open' || st.state === 'home' || st.state === 'playing');
@@ -93,6 +93,7 @@ export class GlassToggleGridCard extends LitElement implements LovelaceCard {
       .grid { display: grid; gap: 12px; }
       .q {
         aspect-ratio: 1;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -101,6 +102,7 @@ export class GlassToggleGridCard extends LitElement implements LovelaceCard {
         border-radius: 16px;
         cursor: pointer;
         text-align: left;
+        overflow: hidden;
         background: var(--g-inset);
         border: 1px solid var(--g-hair);
         color: var(--g-text-hi);
@@ -108,6 +110,7 @@ export class GlassToggleGridCard extends LitElement implements LovelaceCard {
       }
       .q.on { background: var(--g-amber); color: var(--g-amber-ink); border-color: transparent; }
       .q:hover { border-color: var(--g-border-hi); }
+      .qt { min-width: 0; }
       .qn { font-size: 13px; font-weight: 700; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .qs { font-size: 11.5px; margin-top: 2px; opacity: 0.75; text-transform: capitalize; }
     `,

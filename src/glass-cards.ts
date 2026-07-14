@@ -25,7 +25,7 @@ import './cards/nav-card';
 import './cards/garage-card';
 import './editors/config-editor';
 
-export const GLASS_VERSION = '0.13.0';
+export const GLASS_VERSION = '0.13.1';
 
 ensureFonts();
 

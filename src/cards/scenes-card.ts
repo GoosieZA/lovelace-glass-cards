@@ -61,7 +61,7 @@ export class GlassScenesCard extends LitElement implements LovelaceCard {
     return html`
       <div class="card">
         ${this._config.title ? html`<div class="hdr"><div class="hdr-l">${icon('auto_awesome', 20, 'var(--g-amber)')}<span class="title">${this._config.title}</span></div></div>` : nothing}
-        <div class="grid" style="grid-template-columns:repeat(${this._config.columns}, 1fr)">
+        <div class="grid" style="grid-template-columns:repeat(${this._config.columns}, minmax(0, 1fr))">
           ${this._scenes.map((s) => {
             const st = this.hass!.states[s.entity];
             const name = s.name ?? (st?.attributes.friendly_name as string) ?? s.entity;

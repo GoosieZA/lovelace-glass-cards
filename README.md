@@ -26,6 +26,9 @@ A custom [Lovelace](https://www.home-assistant.io/dashboards/) card library for 
 | `glass-aircon-card` | Available | Climate thermostat — hvac modes, fan speed, airflow |
 | `glass-geyser-card` | Available | Water heater — tank visual, target temp, toggleable solar mode |
 | `glass-toggle-grid-card` | Available | Square tap-to-toggle tiles (no dimmer) for any switchables |
+| `glass-heatpump-card` | Available | Pool heat-pump thermostat — ring dial, heat/cool/auto |
+| `glass-water-chemistry-card` | Available | Pool metrics (pH, chlorine, …) with in-range bars |
+| `glass-nav-card` | Available | Bottom navigation — dock or floating pill, sticks to screen bottom |
 
 ## Install
 

@@ -10,6 +10,7 @@ const ent = (domain?: string | string[], multiple = false) => ({
 const text = { text: {} };
 const num = (min: number, max: number) => ({ number: { min, max, mode: 'box' } });
 const sel = (options: unknown[]) => ({ select: { mode: 'dropdown', options } });
+const bool = { boolean: {} };
 
 type Schema = Array<Record<string, unknown>>;
 
@@ -154,6 +155,20 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'columns', selector: num(2, 8) },
     { name: 'entities', required: true, selector: ent(['light', 'switch', 'fan', 'input_boolean', 'script', 'scene'], true) },
   ],
+  'glass-heatpump-card': [
+    { name: 'entity', required: true, selector: ent('climate') },
+    { name: 'name', selector: text },
+    { name: 'subtitle', selector: text },
+  ],
+  'glass-water-chemistry-card': [
+    { name: 'title', selector: text },
+    { name: 'metrics', selector: ent('sensor', true) },
+  ],
+  'glass-nav-card': [
+    { name: 'variant', selector: sel([{ value: 'dock', label: 'Full-width dock' }, { value: 'pill', label: 'Floating pill' }]) },
+    { name: 'fixed', selector: bool },
+    { name: 'max_width', selector: num(320, 1600) },
+  ],
   'glass-light-card': [
     { name: 'entity', required: true, selector: ent('light') },
     { name: 'name', selector: text },
@@ -239,6 +254,9 @@ const LABELS: Record<string, string> = {
   power_sensor: 'Power draw sensor (kW)',
   solar_mode: 'Solar mode switch (toggleable)',
   modes: 'Extra mode switches (boost, element, timer)',
+  metrics: 'Water metric sensors (pH, chlorine, …)',
+  fixed: 'Stick to bottom of screen',
+  max_width: 'Maximum width (px)',
   solar: 'Solar power sensor',
   grid: 'Grid power sensor (+import / −export)',
   battery: 'Battery power sensor (+discharge / −charge)',

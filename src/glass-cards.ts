@@ -19,9 +19,12 @@ import './cards/light-card';
 import './cards/aircon-card';
 import './cards/geyser-card';
 import './cards/toggle-grid-card';
+import './cards/heatpump-card';
+import './cards/water-chemistry-card';
+import './cards/nav-card';
 import './editors/config-editor';
 
-export const GLASS_VERSION = '0.11.0';
+export const GLASS_VERSION = '0.12.0';
 
 ensureFonts();
 
@@ -153,6 +156,24 @@ w.customCards.push(
     type: 'glass-toggle-grid-card',
     name: 'Glass Toggle Grid Card',
     description: 'Square tap-to-toggle tiles (no dimmer) for any switchables.',
+    preview: true,
+  },
+  {
+    type: 'glass-heatpump-card',
+    name: 'Glass Heat Pump Card',
+    description: 'Pool heat-pump thermostat: ring dial, heat/cool/auto.',
+    preview: true,
+  },
+  {
+    type: 'glass-water-chemistry-card',
+    name: 'Glass Water Chemistry Card',
+    description: 'Pool metrics (pH, chlorine, …) with in-range bars.',
+    preview: true,
+  },
+  {
+    type: 'glass-nav-card',
+    name: 'Glass Bottom Nav Card',
+    description: 'Bottom navigation — dock or floating pill, sticks to screen bottom.',
     preview: true,
   }
 );

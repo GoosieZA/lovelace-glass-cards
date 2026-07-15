@@ -26,8 +26,9 @@ import './cards/garage-card';
 import './cards/sprinkler-card';
 import './cards/irrigation-card';
 import './editors/config-editor';
+import './editors/toggle-grid-editor';
 
-export const GLASS_VERSION = '0.14.0';
+export const GLASS_VERSION = '0.15.0';
 
 ensureFonts();
 

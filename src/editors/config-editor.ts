@@ -166,6 +166,16 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'name', selector: text },
     { name: 'subtitle', selector: text },
   ],
+  'glass-sprinkler-card': [
+    { name: 'entity', required: true, selector: ent(['switch', 'valve', 'input_boolean']) },
+    { name: 'variant', selector: sel([{ value: 'hero', label: 'Hero (animated)' }, { value: 'compact', label: 'Compact tile' }]) },
+    { name: 'name', selector: text },
+    { name: 'subtitle', selector: text },
+  ],
+  'glass-irrigation-card': [
+    { name: 'title', selector: text },
+    { name: 'zones', required: true, selector: ent(['switch', 'valve', 'input_boolean'], true) },
+  ],
   'glass-water-chemistry-card': [
     { name: 'title', selector: text },
     { name: 'metrics', selector: ent('sensor', true) },

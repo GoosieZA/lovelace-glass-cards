@@ -4,7 +4,9 @@ import type { HomeAssistant, LovelaceCard, LovelaceCardConfig } from 'custom-car
 import { glassBase, icon, placeholder } from '../theme/tokens';
 
 interface GlassGarageCardConfig extends LovelaceCardConfig {
-  entity: string; // cover.*
+  entity?: string; // cover.* — state + control
+  state_entity?: string; // binary_sensor.* / cover.* — open/closed state
+  trigger?: string; // switch / button / script / input_boolean — actuate the door
   name?: string;
   subtitle?: string;
   variant?: 'full' | 'compact';
@@ -35,11 +37,21 @@ export class GlassGarageCard extends LitElement implements LovelaceCard {
     if (changed.has('_config')) return true;
     const old = changed.get('hass') as HomeAssistant | undefined;
     if (!old || !this.hass || !this._config) return true;
-    return old.states[this._config.entity] !== this.hass.states[this._config.entity];
+    const ids = [this._stateId, this._config.trigger].filter(Boolean) as string[];
+    return ids.some((id) => old.states[id] !== this.hass!.states[id]);
+  }
+
+  private get _stateId(): string | undefined {
+    return this._config!.state_entity || this._config!.entity;
   }
 
   private get _st() {
-    return this._config!.entity ? this.hass!.states[this._config!.entity] : undefined;
+    return this._stateId ? this.hass!.states[this._stateId] : undefined;
+  }
+
+  private get _hasControl(): boolean {
+    const c = this._config!;
+    return !!(c.trigger || (c.entity && c.entity.startsWith('cover.')));
   }
 
   /** 0 = closed (door down), 100 = fully open (door up). */
@@ -47,7 +59,7 @@ export class GlassGarageCard extends LitElement implements LovelaceCard {
     const st = this._st!;
     const pos = st.attributes.current_position;
     if (pos != null && !Number.isNaN(Number(pos))) return Number(pos);
-    if (st.state === 'open') return 100;
+    if (st.state === 'open' || st.state === 'on') return 100;
     if (st.state === 'opening') return 60;
     if (st.state === 'closing') return 40;
     return 0;
@@ -55,28 +67,38 @@ export class GlassGarageCard extends LitElement implements LovelaceCard {
 
   private _look() {
     const s = this._st!.state;
-    if (s === 'open') return { color: 'var(--g-amber)', label: 'Open', icon: 'garage_home' };
+    if (s === 'open' || s === 'on') return { color: 'var(--g-amber)', label: 'Open', icon: 'garage_home' };
     if (s === 'opening' || s === 'closing') return { color: 'var(--g-amber)', label: s === 'opening' ? 'Opening…' : 'Closing…', icon: 'garage_home', moving: true };
     return { color: 'var(--g-green)', label: 'Closed', icon: 'garage' };
   }
 
   private _toggle(e: Event): void {
     e.stopPropagation();
-    const s = this._st!.state;
-    const service = s === 'open' || s === 'opening' ? 'close_cover' : 'open_cover';
-    this.hass!.callService('cover', service, { entity_id: this._config!.entity });
+    if (!this._hasControl) return;
+    const c = this._config!;
+    if (c.trigger) {
+      const domain = c.trigger.split('.')[0];
+      if (domain === 'button') this.hass!.callService('button', 'press', { entity_id: c.trigger });
+      else if (domain === 'script') this.hass!.callService('script', 'turn_on', { entity_id: c.trigger });
+      else this.hass!.callService('homeassistant', 'toggle', { entity_id: c.trigger });
+    } else if (c.entity && c.entity.startsWith('cover.')) {
+      const s = this._st!.state;
+      const service = s === 'open' || s === 'opening' ? 'close_cover' : 'open_cover';
+      this.hass!.callService('cover', service, { entity_id: c.entity });
+    }
   }
 
   protected render() {
     if (!this._config || !this.hass) return nothing;
-    if (!this._st) return placeholder('Select a garage door (cover) entity', 'garage');
+    if (!this._st) return placeholder('Select a garage cover — or a state sensor + trigger', 'garage');
     const look = this._look();
     const pct = this._openPct();
     const name = this._config.name ?? (this._st.attributes.friendly_name as string) ?? 'Garage';
+    const control = this._hasControl;
 
     if (this._config.variant === 'compact') {
       return html`
-        <button class="tile" @click=${this._toggle} title=${name}>
+        <button class="tile" @click=${this._toggle} title=${name} ?disabled=${!control}>
           <div class="top">
             <div class="mini">
               <div class="mini-door" style="transform:translateY(-${pct}%)"></div>
@@ -118,9 +140,11 @@ export class GlassGarageCard extends LitElement implements LovelaceCard {
           <div class="floor"></div>
         </div>
 
-        <button class="btn ${look.color === 'var(--g-amber)' ? 'primary' : 'soft'}" @click=${this._toggle}>
-          ${icon(look.moving ? 'autorenew' : open ? 'arrow_downward' : 'arrow_upward', 20)}${open ? 'Close' : 'Open'}
-        </button>
+        ${control
+          ? html`<button class="btn ${look.color === 'var(--g-amber)' ? 'primary' : 'soft'}" @click=${this._toggle}>
+              ${icon(look.moving ? 'autorenew' : open ? 'arrow_downward' : 'arrow_upward', 20)}${open ? 'Close' : 'Open'}
+            </button>`
+          : html`<div class="viewonly">${icon('visibility', 18, 'var(--g-dim)')}View only — add a trigger to control</div>`}
       </div>
     `;
   }
@@ -155,6 +179,8 @@ export class GlassGarageCard extends LitElement implements LovelaceCard {
       .btn { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 13px; border-radius: var(--g-r-ctl); border: none; cursor: pointer; font-family: var(--g-font); font-weight: 700; font-size: 14px; }
       .btn .ms { }
       .btn.primary .ms[style*='autorenew'] { animation: g-spin 1s linear infinite; }
+      .viewonly { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 11px; border-radius: var(--g-r-ctl); background: var(--g-inset); color: var(--g-dim); font-size: 12.5px; font-weight: 600; }
+      .tile[disabled] { cursor: default; }
 
       /* compact */
       .tile { width: 100%; aspect-ratio: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; padding: 13px; border-radius: 16px; cursor: pointer; text-align: left; background: var(--g-inset); border: 1px solid var(--g-hair); color: var(--g-text-hi); }

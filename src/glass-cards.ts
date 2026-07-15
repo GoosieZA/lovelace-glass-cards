@@ -27,7 +27,7 @@ import './cards/sprinkler-card';
 import './cards/irrigation-card';
 import './editors/config-editor';
 
-export const GLASS_VERSION = '0.14.0';
+export const GLASS_VERSION = '0.16.0';
 
 ensureFonts();
 

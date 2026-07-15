@@ -6,16 +6,6 @@ import { glassBase, icon, placeholder } from '../theme/tokens';
 
 type AlarmVariant = 'shield' | 'radial' | 'bar' | 'keypad' | 'triggered';
 
-interface GlassAlarmCardConfig extends LovelaceCardConfig {
-  entity: string; // alarm_control_panel.*
-  name?: string;
-  subtitle?: string;
-  code?: string; // optional fixed code
-  code_length?: number; // keypad auto-submit length
-  buttons?: string[];
-  variant?: AlarmVariant;
-}
-
 interface ButtonDef {
   label: string;
   icon: string;
@@ -23,8 +13,22 @@ interface ButtonDef {
   activeState?: string;
 }
 
+// A button in config is either a preset key (string) or a custom object.
+type ButtonConfig = string | { label: string; service: string; icon?: string; state?: string };
+
+interface GlassAlarmCardConfig extends LovelaceCardConfig {
+  entity: string; // alarm_control_panel.*
+  name?: string;
+  subtitle?: string;
+  code?: string; // optional fixed code
+  code_length?: number; // keypad auto-submit length
+  buttons?: ButtonConfig[];
+  variant?: AlarmVariant;
+}
+
 const BUTTON_DEFS: Record<string, ButtonDef> = {
   disarm: { label: 'Disarm', icon: 'lock_open', service: 'alarm_disarm' },
+  arm: { label: 'Arm', icon: 'lock', service: 'alarm_arm_away', activeState: 'armed_away' },
   arm_home: { label: 'Home', icon: 'home', service: 'alarm_arm_home', activeState: 'armed_home' },
   arm_away: { label: 'Away', icon: 'lock', service: 'alarm_arm_away', activeState: 'armed_away' },
   arm_night: { label: 'Night', icon: 'bedtime', service: 'alarm_arm_night', activeState: 'armed_night' },
@@ -132,10 +136,16 @@ export class GlassAlarmCard extends LitElement implements LovelaceCard {
     this._code = '';
   }
 
+  private _resolveButton(b: ButtonConfig): ButtonDef | undefined {
+    if (typeof b === 'string') return BUTTON_DEFS[b];
+    if (!b || !b.service) return undefined;
+    return { label: b.label, icon: b.icon ?? 'lock', service: b.service, activeState: b.state };
+  }
+
   private _actionButtons() {
     return (this._config!.buttons ?? DEFAULT_BUTTONS)
-      .map((key) => BUTTON_DEFS[key])
-      .filter(Boolean)
+      .map((b) => this._resolveButton(b))
+      .filter((b): b is ButtonDef => !!b)
       .map(
         (b) => html`
           <button class="btn ${b.activeState && this._st.state === b.activeState ? 'success' : 'soft'}" @click=${() => this._call(b.service)}>

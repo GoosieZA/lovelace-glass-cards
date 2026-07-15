@@ -8,6 +8,7 @@ interface GlassCameraCardConfig extends LovelaceCardConfig {
   entity: string; // camera.*
   name?: string;
   icon?: string;
+  show_timestamp?: boolean; // overlay date/time (default true)
 }
 
 @customElement('glass-camera-card')
@@ -57,7 +58,7 @@ export class GlassCameraCard extends LitElement implements LovelaceCard {
       <div class="cam" @click=${() => fireEvent(this, 'hass-more-info', { entityId: this._config!.entity })}>
         ${pic ? html`<img src=${pic} alt=${name} />` : nothing}
         <div class="scan"></div>
-        <div class="ts">${this._stamp(st.last_changed)}</div>
+        ${this._config.show_timestamp === false ? nothing : html`<div class="ts">${this._stamp(st.last_changed)}</div>`}
         ${live
           ? html`<div class="live-badge"><span class="rec"></span>LIVE</div>`
           : html`<div class="live-badge off">OFFLINE</div>`}

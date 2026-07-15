@@ -29,6 +29,7 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'entity', required: true, selector: ent('camera') },
     { name: 'name', selector: text },
     { name: 'icon', selector: text },
+    { name: 'show_timestamp', selector: bool },
   ],
   'glass-alarm-card': [
     { name: 'entity', required: true, selector: ent('alarm_control_panel') },
@@ -54,6 +55,7 @@ const SCHEMAS: Record<string, Schema> = {
           mode: 'list',
           options: [
             { value: 'disarm', label: 'Disarm' },
+            { value: 'arm', label: 'Arm (single button)' },
             { value: 'arm_home', label: 'Arm Home' },
             { value: 'arm_away', label: 'Arm Away' },
             { value: 'arm_night', label: 'Arm Night' },
@@ -161,7 +163,9 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'subtitle', selector: text },
   ],
   'glass-garage-card': [
-    { name: 'entity', required: true, selector: ent('cover') },
+    { name: 'entity', selector: ent('cover') },
+    { name: 'state_entity', selector: ent(['binary_sensor', 'cover']) },
+    { name: 'trigger', selector: ent(['switch', 'button', 'script', 'input_boolean']) },
     { name: 'variant', selector: sel([{ value: 'full', label: 'Full (animated visual)' }, { value: 'compact', label: 'Compact tile' }]) },
     { name: 'name', selector: text },
     { name: 'subtitle', selector: text },
@@ -273,6 +277,9 @@ const LABELS: Record<string, string> = {
   metrics: 'Water metric sensors (pH, chlorine, …)',
   fixed: 'Stick to bottom of screen',
   max_width: 'Maximum width (px)',
+  show_timestamp: 'Show date/time overlay',
+  state_entity: 'State sensor (open / closed)',
+  trigger: 'Trigger to open/close (switch / button / script)',
   solar: 'Solar power sensor',
   grid: 'Grid power sensor (+import / −export)',
   battery: 'Battery power sensor (+discharge / −charge)',

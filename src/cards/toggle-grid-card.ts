@@ -41,7 +41,7 @@ export class GlassToggleGridCard extends LitElement implements LovelaceCard {
   }
 
   public static getConfigElement(): HTMLElement {
-    return document.createElement('glass-config-editor');
+    return document.createElement('glass-toggle-grid-editor');
   }
 
   public static getStubConfig(): Omit<GlassToggleGridCardConfig, 'type'> {

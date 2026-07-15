@@ -30,6 +30,11 @@ export class GlassGeyserCard extends LitElement implements LovelaceCard {
   @state() private _config?: GlassGeyserCardConfig;
   private _modes: ModeButton[] = [];
 
+  // Optimistic state: flipped immediately on click, cleared once HA confirms.
+  // null means "use live HA state"; true/false overrides for instant UI feedback.
+  @state() private _optimisticOn: boolean | null = null;
+  private _optimisticTimer: ReturnType<typeof setTimeout> | null = null;
+
   public setConfig(config: GlassGeyserCardConfig): void {
     this._modes = (config.modes ?? []).map((m) => (typeof m === 'string' ? { entity: m } : m));
     this._config = { name: 'Geyser', subtitle: 'Water heater', min_temp: 20, max_temp: 70, ...config };
@@ -56,6 +61,23 @@ export class GlassGeyserCard extends LitElement implements LovelaceCard {
     return ids.some((id) => old.states[id] !== this.hass!.states[id]);
   }
 
+  protected updated(changed: PropertyValues): void {
+    // Round-trip complete: HA delivered a new entity object for the power entity.
+    // Revert to HA ground truth and cancel the safety timeout.
+    if (changed.has('hass') && this._optimisticOn !== null && this._config?.power) {
+      const id = this._config.power;
+      const prev = (changed.get('hass') as HomeAssistant | undefined)?.states[id];
+      const next = this.hass?.states[id];
+      if (prev !== next) {
+        if (this._optimisticTimer !== null) {
+          clearTimeout(this._optimisticTimer);
+          this._optimisticTimer = null;
+        }
+        this._optimisticOn = null;
+      }
+    }
+  }
+
   private _num(id?: string): number | null {
     const n = id ? Number(this.hass!.states[id]?.state) : NaN;
     return Number.isNaN(n) ? null : n;
@@ -71,8 +93,27 @@ export class GlassGeyserCard extends LitElement implements LovelaceCard {
   private _toggle(id: string | undefined, e: Event): void {
     e.stopPropagation();
     if (!id) return;
-    const domain = id.startsWith('water_heater.') ? 'water_heater' : 'homeassistant';
-    this.hass!.callService(domain, 'toggle', { entity_id: id });
+
+    const currentlyOn = this._isOn(id);
+
+    // Only apply optimistic state for the main power entity so we get instant
+    // visual feedback on the richest state change (pill, glow, bubbles, icon).
+    if (id === this._config?.power) {
+      this._optimisticOn = !currentlyOn;
+      // Safety fallback: revert after 5 s if HA never confirms (e.g. service failed).
+      if (this._optimisticTimer !== null) clearTimeout(this._optimisticTimer);
+      this._optimisticTimer = setTimeout(() => {
+        this._optimisticOn = null;
+        this._optimisticTimer = null;
+      }, 5000);
+    }
+
+    // water_heater domain has no 'toggle' service — use turn_on / turn_off explicitly.
+    if (id.startsWith('water_heater.')) {
+      this.hass!.callService('water_heater', currentlyOn ? 'turn_off' : 'turn_on', { entity_id: id });
+    } else {
+      this.hass!.callService('homeassistant', 'toggle', { entity_id: id });
+    }
   }
 
   private _step(dir: 1 | -1, e: Event): void {
@@ -113,7 +154,7 @@ export class GlassGeyserCard extends LitElement implements LovelaceCard {
   protected render() {
     if (!this._config || !this.hass) return nothing;
     const c = this._config;
-    const powerOn = this._isOn(c.power);
+    const powerOn = this._optimisticOn !== null ? this._optimisticOn : this._isOn(c.power);
     const current = this._num(c.current);
     const target = this._target();
     const min = c.min_temp ?? 20;

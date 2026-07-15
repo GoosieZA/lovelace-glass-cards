@@ -104,7 +104,6 @@ export class GlassSensorListCard extends LitElement implements LovelaceCard {
               ${this._visual(type, open)}
               <div class="txt">
                 <div class="name">${name}</div>
-                <div class="eid">${row.entity}</div>
               </div>
               <span class="badge ${open ? 'amber' : 'green'}">${open ? 'Open' : 'Closed'}</span>
             </div>
@@ -123,7 +122,6 @@ export class GlassSensorListCard extends LitElement implements LovelaceCard {
       .line.sep { border-bottom: 1px solid var(--g-hair); }
       .txt { flex: 1; min-width: 0; }
       .name { font-size: 14px; font-weight: 700; }
-      .eid { font-size: 11.5px; color: var(--g-dim); }
       .missing { color: var(--g-red-text); font-size: 12px; }
 
       .v { width: 48px; height: 48px; flex: none; position: relative; }

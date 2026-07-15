@@ -655,7 +655,6 @@ let t=!1;function e(t,e,s,i){var a,r=arguments.length,n=r<3?e:null===i?i=Object.
               ${this._visual(i,a)}
               <div class="txt">
                 <div class="name">${r}</div>
-                <div class="eid">${t.entity}</div>
               </div>
               <span class="badge ${a?"amber":"green"}">${a?"Open":"Closed"}</span>
             </div>
@@ -668,7 +667,6 @@ let t=!1;function e(t,e,s,i){var a,r=arguments.length,n=r<3?e:null===i?i=Object.
       .line.sep { border-bottom: 1px solid var(--g-hair); }
       .txt { flex: 1; min-width: 0; }
       .name { font-size: 14px; font-weight: 700; }
-      .eid { font-size: 11.5px; color: var(--g-dim); }
       .missing { color: var(--g-red-text); font-size: 12px; }
 
       .v { width: 48px; height: 48px; flex: none; position: relative; }

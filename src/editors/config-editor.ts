@@ -160,6 +160,12 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'name', selector: text },
     { name: 'subtitle', selector: text },
   ],
+  'glass-garage-card': [
+    { name: 'entity', required: true, selector: ent('cover') },
+    { name: 'variant', selector: sel([{ value: 'full', label: 'Full (animated visual)' }, { value: 'compact', label: 'Compact tile' }]) },
+    { name: 'name', selector: text },
+    { name: 'subtitle', selector: text },
+  ],
   'glass-water-chemistry-card': [
     { name: 'title', selector: text },
     { name: 'metrics', selector: ent('sensor', true) },

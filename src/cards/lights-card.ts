@@ -129,13 +129,14 @@ export class GlassLightsCard extends LitElement implements LovelaceCard {
       .g-name { font-size: 14px; font-weight: 700; color: var(--g-text); }
       .g-sum { font-size: 12px; color: var(--g-faint); }
       .grow { flex: 1; }
-      .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
       .lt {
         display: flex; flex-direction: column; justify-content: space-between; gap: 10px;
-        min-height: 78px; padding: 12px 13px; border-radius: 16px; cursor: pointer; text-align: left;
+        min-height: 78px; min-width: 0; overflow: hidden; padding: 12px 13px; border-radius: 16px; cursor: pointer; text-align: left;
         background: var(--g-inset); color: var(--g-text-hi); border: 1px solid var(--g-hair);
         transition: background 0.18s ease, color 0.18s ease;
       }
+      .ln { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .lt.on { background: var(--g-amber); color: var(--g-amber-ink); border-color: transparent; }
       .lt-top { display: flex; align-items: flex-start; justify-content: space-between; }
       .ln { font-size: 13.5px; font-weight: 700; line-height: 1.15; }

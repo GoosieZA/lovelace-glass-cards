@@ -22,9 +22,10 @@ import './cards/toggle-grid-card';
 import './cards/heatpump-card';
 import './cards/water-chemistry-card';
 import './cards/nav-card';
+import './cards/garage-card';
 import './editors/config-editor';
 
-export const GLASS_VERSION = '0.12.0';
+export const GLASS_VERSION = '0.13.1';
 
 ensureFonts();
 
@@ -174,6 +175,12 @@ w.customCards.push(
     type: 'glass-nav-card',
     name: 'Glass Bottom Nav Card',
     description: 'Bottom navigation — dock or floating pill, sticks to screen bottom.',
+    preview: true,
+  },
+  {
+    type: 'glass-garage-card',
+    name: 'Glass Garage Card',
+    description: 'Garage door — animated rolling-door visual or compact tile.',
     preview: true,
   }
 );

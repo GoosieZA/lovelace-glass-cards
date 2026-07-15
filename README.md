@@ -30,6 +30,8 @@ A custom [Lovelace](https://www.home-assistant.io/dashboards/) card library for 
 | `glass-water-chemistry-card` | Available | Pool metrics (pH, chlorine, …) with in-range bars |
 | `glass-nav-card` | Available | Bottom navigation — dock or floating pill, sticks to screen bottom |
 | `glass-garage-card` | Available | Garage door — animated rolling-door visual or compact tile |
+| `glass-sprinkler-card` | Available | Sprinkler zone — animated spray hero or compact tile |
+| `glass-irrigation-card` | Available | Multi-zone irrigation control with per-zone toggles |
 
 ## Install
 

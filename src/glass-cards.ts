@@ -23,9 +23,11 @@ import './cards/heatpump-card';
 import './cards/water-chemistry-card';
 import './cards/nav-card';
 import './cards/garage-card';
+import './cards/sprinkler-card';
+import './cards/irrigation-card';
 import './editors/config-editor';
 
-export const GLASS_VERSION = '0.13.1';
+export const GLASS_VERSION = '0.14.0';
 
 ensureFonts();
 
@@ -181,6 +183,18 @@ w.customCards.push(
     type: 'glass-garage-card',
     name: 'Glass Garage Card',
     description: 'Garage door — animated rolling-door visual or compact tile.',
+    preview: true,
+  },
+  {
+    type: 'glass-sprinkler-card',
+    name: 'Glass Sprinkler Card',
+    description: 'Sprinkler zone — animated spray hero or compact tile.',
+    preview: true,
+  },
+  {
+    type: 'glass-irrigation-card',
+    name: 'Glass Irrigation Card',
+    description: 'Multi-zone irrigation control with per-zone toggles.',
     preview: true,
   }
 );

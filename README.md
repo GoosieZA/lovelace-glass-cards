@@ -32,6 +32,8 @@ A custom [Lovelace](https://www.home-assistant.io/dashboards/) card library for 
 | `glass-garage-card` | Available | Garage door — animated rolling-door visual or compact tile |
 | `glass-sprinkler-card` | Available | Sprinkler zone — animated spray hero or compact tile |
 | `glass-irrigation-card` | Available | Multi-zone irrigation control with per-zone toggles |
+| `glass-badge-strip-card` | Available | Header status badges — strip or circular |
+| `glass-person-badge-card` | Available | Header person card — avatar, zone, battery, activity |
 
 ## Install
 

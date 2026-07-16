@@ -71,13 +71,15 @@ export class GlassNavCard extends LitElement implements LovelaceCard {
     return !!path && (cur === path || cur.startsWith(path + '/'));
   }
 
-  /** True when rendered inside the card editor's live preview, so we don't
-   *  position:fixed over the edit dialog (which would cover its Save button). */
-  private _inPreview(): boolean {
+  /** True when rendered inside the card editor preview OR the dashboard edit
+   *  mode. In both cases we skip position:fixed so the card stays in the normal
+   *  flow — otherwise it covers the edit dialog's Save button, and in edit mode
+   *  the fixed bar isn't clickable to open its own editor. */
+  private _inEditor(): boolean {
     let node: any = this;
     while (node) {
       const tag = node.localName;
-      if (tag === 'hui-card-preview' || tag === 'hui-dialog-edit-card') return true;
+      if (tag === 'hui-card-preview' || tag === 'hui-dialog-edit-card' || tag === 'hui-card-options') return true;
       node = node.assignedSlot ?? node.parentNode ?? node.host;
     }
     return false;
@@ -87,7 +89,7 @@ export class GlassNavCard extends LitElement implements LovelaceCard {
     if (!this._config) return nothing;
     const c = this._config;
     const pill = c.variant === 'pill';
-    const fixed = c.fixed !== false && !this._inPreview();
+    const fixed = c.fixed !== false && !this._inEditor();
     const wrapStyle = fixed
       ? `position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;padding:12px 16px calc(12px + env(safe-area-inset-bottom));`
       : 'display:flex;justify-content:center;';

@@ -71,11 +71,24 @@ export class GlassNavCard extends LitElement implements LovelaceCard {
     return !!path && (cur === path || cur.startsWith(path + '/'));
   }
 
+  /** True when rendered inside the card editor's live preview, so we don't
+   *  position:fixed over the edit dialog (which would cover its Save button). */
+  private _inPreview(): boolean {
+    let node: any = this;
+    while (node) {
+      const tag = node.localName;
+      if (tag === 'hui-card-preview' || tag === 'hui-dialog-edit-card') return true;
+      node = node.assignedSlot ?? node.parentNode ?? node.host;
+    }
+    return false;
+  }
+
   protected render() {
     if (!this._config) return nothing;
     const c = this._config;
     const pill = c.variant === 'pill';
-    const wrapStyle = c.fixed
+    const fixed = c.fixed !== false && !this._inPreview();
+    const wrapStyle = fixed
       ? `position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;justify-content:center;padding:12px 16px calc(12px + env(safe-area-inset-bottom));`
       : 'display:flex;justify-content:center;';
 
@@ -105,12 +118,14 @@ export class GlassNavCard extends LitElement implements LovelaceCard {
         background: var(--g-card);
         border: 1px solid var(--g-border);
         border-radius: 24px;
-        padding: 10px 16px;
+        padding: 10px 12px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        gap: 6px;
         box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
       }
+      /* Dock items share the width equally so 2 or 6 items always space evenly. */
+      .dock .item { flex: 1 1 0; }
       .bar.pill {
         width: auto;
         display: inline-flex;

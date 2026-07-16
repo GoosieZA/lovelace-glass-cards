@@ -25,10 +25,12 @@ import './cards/nav-card';
 import './cards/garage-card';
 import './cards/sprinkler-card';
 import './cards/irrigation-card';
+import './cards/badge-strip-card';
+import './cards/person-badge-card';
 import './editors/config-editor';
 import './editors/toggle-grid-editor';
 
-export const GLASS_VERSION = '0.17.0';
+export const GLASS_VERSION = '0.18.0';
 
 ensureFonts();
 
@@ -196,6 +198,18 @@ w.customCards.push(
     type: 'glass-irrigation-card',
     name: 'Glass Irrigation Card',
     description: 'Multi-zone irrigation control with per-zone toggles.',
+    preview: true,
+  },
+  {
+    type: 'glass-badge-strip-card',
+    name: 'Glass Badge Strip Card',
+    description: 'Header status badges — strip or circular.',
+    preview: true,
+  },
+  {
+    type: 'glass-person-badge-card',
+    name: 'Glass Person Badge Card',
+    description: 'Header person card — avatar, zone, battery, activity.',
     preview: true,
   }
 );

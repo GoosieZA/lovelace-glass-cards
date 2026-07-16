@@ -170,6 +170,15 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'name', selector: text },
     { name: 'subtitle', selector: text },
   ],
+  'glass-badge-strip-card': [
+    { name: 'variant', selector: sel([{ value: 'strip', label: 'Strip' }, { value: 'circular', label: 'Circular' }]) },
+    { name: 'badges', required: true, selector: ent(undefined, true) },
+  ],
+  'glass-person-badge-card': [
+    { name: 'entity', required: true, selector: ent(['person', 'device_tracker']) },
+    { name: 'name', selector: text },
+    { name: 'battery', selector: ent('sensor') },
+  ],
   'glass-sprinkler-card': [
     { name: 'entity', required: true, selector: ent(['switch', 'valve', 'input_boolean']) },
     { name: 'variant', selector: sel([{ value: 'hero', label: 'Hero (animated)' }, { value: 'compact', label: 'Compact tile' }]) },
@@ -280,6 +289,8 @@ const LABELS: Record<string, string> = {
   show_timestamp: 'Show date/time overlay',
   state_entity: 'State sensor (open / closed)',
   trigger: 'Trigger to open/close (switch / button / script)',
+  badges: 'Status badges',
+  battery: 'Battery sensor (optional)',
   solar: 'Solar power sensor',
   grid: 'Grid power sensor (+import / −export)',
   battery: 'Battery power sensor (+discharge / −charge)',

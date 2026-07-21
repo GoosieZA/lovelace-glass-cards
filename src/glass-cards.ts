@@ -27,10 +27,13 @@ import './cards/sprinkler-card';
 import './cards/irrigation-card';
 import './cards/badge-strip-card';
 import './cards/person-badge-card';
+import './cards/clock-weather-card';
+import './cards/room-card';
+import './cards/people-row-card';
 import './editors/config-editor';
 import './editors/toggle-grid-editor';
 
-export const GLASS_VERSION = '0.18.0';
+export const GLASS_VERSION = '0.19.0';
 
 ensureFonts();
 
@@ -210,6 +213,24 @@ w.customCards.push(
     type: 'glass-person-badge-card',
     name: 'Glass Person Badge Card',
     description: 'Header person card — avatar, zone, battery, activity.',
+    preview: true,
+  },
+  {
+    type: 'glass-clock-weather-card',
+    name: 'Glass Clock & Weather Card',
+    description: 'Live clock, greeting and current weather — full hero or mobile strip.',
+    preview: true,
+  },
+  {
+    type: 'glass-room-card',
+    name: 'Glass Room Card',
+    description: 'Per-room summary — temp, humidity, devices and a master light toggle.',
+    preview: true,
+  },
+  {
+    type: 'glass-people-row-card',
+    name: 'Glass People Row Card',
+    description: 'Compact presence row — stacked avatars and who’s home.',
     preview: true,
   }
 );

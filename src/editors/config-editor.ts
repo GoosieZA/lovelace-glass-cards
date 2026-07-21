@@ -221,6 +221,25 @@ const SCHEMAS: Record<string, Schema> = {
     { name: 'solar_mode', selector: ent(['switch', 'input_boolean']) },
     { name: 'modes', selector: ent(['switch', 'input_boolean'], true) },
   ],
+  'glass-clock-weather-card': [
+    { name: 'weather', selector: ent('weather') },
+    { name: 'layout', selector: sel([{ value: 'full', label: 'Full (desktop hero)' }, { value: 'compact', label: 'Compact (mobile strip)' }]) },
+    { name: 'show_seconds', selector: bool },
+    { name: 'show_forecast', selector: bool },
+    { name: 'forecast_days', selector: num(1, 7) },
+  ],
+  'glass-room-card': [
+    { name: 'name', required: true, selector: text },
+    { name: 'icon', selector: text },
+    { name: 'color', selector: sel(['amber', 'cyan', 'purple', 'green', 'red']) },
+    { name: 'lights', selector: ent('light', true) },
+    { name: 'temp', selector: ent('sensor') },
+    { name: 'humidity', selector: ent('sensor') },
+    { name: 'devices', selector: ent('sensor') },
+  ],
+  'glass-people-row-card': [
+    { name: 'entities', required: true, selector: ent(['person', 'device_tracker'], true) },
+  ],
   'glass-dishwasher-card': [
     { name: 'name', selector: text },
     { name: 'subtitle', selector: text },
@@ -296,6 +315,14 @@ const LABELS: Record<string, string> = {
   battery: 'Battery power sensor (+discharge / −charge)',
   battery_soc: 'Battery charge % sensor',
   house: 'House load sensor (optional; derived if empty)',
+  weather: 'Weather entity (optional — omit for clock only)',
+  layout: 'Layout',
+  show_seconds: 'Show seconds',
+  show_forecast: 'Show forecast',
+  forecast_days: 'Forecast days',
+  lights: 'Room lights (master toggle)',
+  temp: 'Temperature sensor',
+  devices: 'Device-count sensor (optional)',
 };
 
 const HELPERS: Record<string, string> = {

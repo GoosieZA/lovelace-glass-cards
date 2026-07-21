@@ -30,10 +30,11 @@ import './cards/person-badge-card';
 import './cards/clock-weather-card';
 import './cards/room-card';
 import './cards/people-row-card';
+import './cards/climate-tile-card';
 import './editors/config-editor';
 import './editors/toggle-grid-editor';
 
-export const GLASS_VERSION = '0.19.0';
+export const GLASS_VERSION = '0.20.0';
 
 ensureFonts();
 
@@ -231,6 +232,12 @@ w.customCards.push(
     type: 'glass-people-row-card',
     name: 'Glass People Row Card',
     description: 'Compact presence row — stacked avatars and who’s home.',
+    preview: true,
+  },
+  {
+    type: 'glass-climate-tile-card',
+    name: 'Glass Climate Tile Card',
+    description: 'Compact climate tile — current temp for geyser / aircon.',
     preview: true,
   }
 );

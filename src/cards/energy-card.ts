@@ -3,7 +3,7 @@ import { customElement, property, state } from 'lit/decorators.js';
 import type { HomeAssistant, LovelaceCard, LovelaceCardConfig } from 'custom-card-helpers';
 import { glassBase, icon } from '../theme/tokens';
 
-type EnergyVariant = 'flow' | 'ring' | 'stats' | 'meters' | 'production';
+type EnergyVariant = 'flow' | 'ring' | 'stats' | 'meters' | 'production' | 'strip' | 'bar';
 
 interface GlassEnergyCardConfig extends LovelaceCardConfig {
   title?: string;
@@ -50,7 +50,10 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
   }
 
   public getCardSize(): number {
-    return this._config?.variant === 'flow' || this._config?.variant === 'production' ? 4 : 3;
+    const v = this._config?.variant;
+    if (v === 'flow' || v === 'production') return 4;
+    if (v === 'strip' || v === 'bar') return 1;
+    return 3;
   }
 
   public static getConfigElement(): HTMLElement {
@@ -133,6 +136,10 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
         return this._renderMeters();
       case 'production':
         return this._renderProduction();
+      case 'strip':
+        return this._renderStrip();
+      case 'bar':
+        return this._renderBar();
       default:
         return this._renderFlow();
     }
@@ -275,10 +282,80 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
     </div>`;
   }
 
+  // Compact solar strip — a battery ring plus solar / load / grid mini-stats.
+  private _renderStrip() {
+    const c = this._config!;
+    const solar = this._watts(c.solar);
+    const grid = this._watts(c.grid);
+    let house = this._watts(c.house);
+    if (house == null) house = (solar ?? 0) + (grid ?? 0) + (this._watts(c.battery) ?? 0);
+    const soc = this._stateNum(c.battery_soc);
+
+    return html`<div class="strip">
+      ${soc != null
+        ? html`<div class="soc-ring" style="background:conic-gradient(var(--g-amber) 0 ${soc}%, rgba(255,255,255,0.08) ${soc}% 100%)">
+            <div class="soc-in">${Math.round(soc)}%</div>
+          </div>`
+        : nothing}
+      <div class="strip-stats">
+        <div class="ss"><div class="ss-h">${icon('solar_power', 14, 'var(--g-amber)')}Solar</div><div class="ss-v">${solar != null ? this._kw(solar) : '—'} kW</div></div>
+        <div class="ss"><div class="ss-h">${icon('home', 14, 'var(--g-amber)')}Load</div><div class="ss-v">${house != null ? Math.round(house) : '—'} W</div></div>
+        <div class="ss"><div class="ss-h">${icon('bolt', 14, 'var(--g-purple)')}Grid</div><div class="ss-v">${grid != null ? this._kw(Math.abs(grid)) : '—'} kW</div></div>
+      </div>
+    </div>`;
+  }
+
+  // Compact energy mix — a split bar of solar vs battery contribution.
+  private _renderBar() {
+    const c = this._config!;
+    const solar = Math.max(0, this._watts(c.solar) ?? 0);
+    const battW = this._watts(c.battery) ?? 0;
+    const batt = battW > 0 ? battW : 0; // only discharge contributes to house
+    const total = solar + batt;
+    const solarPct = total > 0 ? Math.round((solar / total) * 100) : 0;
+    const battPct = total > 0 ? 100 - solarPct : 0;
+    const grid = this._watts(c.grid);
+    const status = (grid ?? 0) > 20 ? 'Grid import' : (grid ?? 0) < -20 ? 'Exporting' : 'Self-powered';
+
+    return html`<div class="card bar-card">
+      <div class="bar-hdr">
+        <div class="hdr-l">${icon('bolt', 20, 'var(--g-amber)')}<span class="title">${c.title}</span></div>
+        <span class="bar-status ${status === 'Self-powered' || status === 'Exporting' ? 'green' : ''}">${status}</span>
+      </div>
+      <div class="mix">
+        <span style="width:${solarPct}%;background:linear-gradient(90deg,var(--g-amber-deep),var(--g-amber))"></span>
+        <span style="width:${battPct}%;background:var(--g-cyan)"></span>
+      </div>
+      <div class="mix-legend">
+        <span><span class="d" style="color:var(--g-amber)">●</span> Solar ${solarPct}%</span>
+        <span><span class="d" style="color:var(--g-cyan)">●</span> Battery ${battPct}%</span>
+      </div>
+    </div>`;
+  }
+
   static styles = [
     glassBase,
     css`
       @keyframes g-flow { to { stroke-dashoffset: -16; } }
+
+      /* Compact solar strip */
+      .strip { display: flex; align-items: center; gap: 14px; }
+      .soc-ring { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+      .soc-in { width: 36px; height: 36px; border-radius: 50%; background: var(--g-card); display: flex; align-items: center; justify-content: center; font-family: var(--g-display); font-size: 12px; font-weight: 700; }
+      .strip-stats { flex: 1; display: flex; justify-content: space-between; gap: 8px; }
+      .ss-h { display: flex; align-items: center; gap: 4px; color: var(--g-dim); font-size: 10.5px; }
+      .ss-v { font-family: var(--g-display); font-size: 16px; font-weight: 600; margin-top: 2px; }
+
+      /* Compact energy mix bar */
+      .bar-card { gap: 12px; }
+      .bar-hdr { display: flex; align-items: center; justify-content: space-between; }
+      .bar-status { font-size: 12px; font-weight: 700; color: var(--g-dim); }
+      .bar-status.green { color: var(--g-green); }
+      .mix { height: 12px; border-radius: 12px; background: var(--g-inset); overflow: hidden; display: flex; }
+      .mix > span { height: 100%; }
+      .mix-legend { display: flex; justify-content: space-between; font-size: 11px; color: var(--g-dim); }
+      .mix-legend .d { font-size: 10px; }
+
       .card { display: flex; flex-direction: column; gap: 18px; }
       .section { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--g-faint); font-weight: 700; }
       .dot.pulse { animation: g-pulse 1.4s ease-in-out infinite; }

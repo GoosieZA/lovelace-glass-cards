@@ -37,6 +37,7 @@ A custom [Lovelace](https://www.home-assistant.io/dashboards/) card library for 
 | `glass-clock-weather-card` | Available | Live clock, greeting & weather — full hero or mobile strip |
 | `glass-room-card` | Available | Per-room summary — temp, humidity, devices, master light toggle |
 | `glass-people-row-card` | Available | Compact presence row — stacked avatars and who's home |
+| `glass-climate-tile-card` | Available | Compact climate tile — current temp for geyser / aircon |
 
 ## Install
 

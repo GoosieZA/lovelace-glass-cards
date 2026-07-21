@@ -89,6 +89,8 @@ const SCHEMAS: Record<string, Schema> = {
         { value: 'stats', label: 'Stat trio' },
         { value: 'meters', label: 'Meters' },
         { value: 'production', label: 'Production bars' },
+        { value: 'strip', label: 'Compact solar strip (mobile)' },
+        { value: 'bar', label: 'Compact energy mix bar (mobile)' },
       ]),
     },
     { name: 'solar', selector: ent('sensor') },
@@ -239,6 +241,12 @@ const SCHEMAS: Record<string, Schema> = {
   ],
   'glass-people-row-card': [
     { name: 'entities', required: true, selector: ent(['person', 'device_tracker'], true) },
+  ],
+  'glass-climate-tile-card': [
+    { name: 'entity', required: true, selector: ent(['climate', 'water_heater', 'sensor']) },
+    { name: 'name', selector: text },
+    { name: 'icon', selector: text },
+    { name: 'color', selector: sel(['cyan', 'amber', 'orange', 'purple', 'green', 'red']) },
   ],
   'glass-dishwasher-card': [
     { name: 'name', selector: text },

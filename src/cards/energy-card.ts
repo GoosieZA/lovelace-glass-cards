@@ -291,7 +291,7 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
     if (house == null) house = (solar ?? 0) + (grid ?? 0) + (this._watts(c.battery) ?? 0);
     const soc = this._stateNum(c.battery_soc);
 
-    return html`<div class="strip">
+    return html`<div class="card strip">
       ${soc != null
         ? html`<div class="soc-ring" style="background:conic-gradient(var(--g-amber) 0 ${soc}%, rgba(255,255,255,0.08) ${soc}% 100%)">
             <div class="soc-in">${Math.round(soc)}%</div>
@@ -338,8 +338,8 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
     css`
       @keyframes g-flow { to { stroke-dashoffset: -16; } }
 
-      /* Compact solar strip */
-      .strip { display: flex; align-items: center; gap: 14px; }
+      /* Compact solar strip (row inside the standard card shell) */
+      .strip { flex-direction: row; align-items: center; gap: 16px; }
       .soc-ring { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
       .soc-in { width: 36px; height: 36px; border-radius: 50%; background: var(--g-card); display: flex; align-items: center; justify-content: center; font-family: var(--g-display); font-size: 12px; font-weight: 700; }
       .strip-stats { flex: 1; display: flex; justify-content: space-between; gap: 8px; }

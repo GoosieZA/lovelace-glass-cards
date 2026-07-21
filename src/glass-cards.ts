@@ -34,7 +34,7 @@ import './cards/climate-tile-card';
 import './editors/config-editor';
 import './editors/toggle-grid-editor';
 
-export const GLASS_VERSION = '0.20.1';
+export const GLASS_VERSION = '0.20.2';
 
 ensureFonts();
 

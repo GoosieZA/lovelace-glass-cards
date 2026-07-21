@@ -338,8 +338,9 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
     css`
       @keyframes g-flow { to { stroke-dashoffset: -16; } }
 
-      /* Compact solar strip (row inside the standard card shell) */
-      .strip { flex-direction: row; align-items: center; gap: 16px; }
+      /* Compact solar strip — row inside the card shell.
+         .card.strip beats the later ".card { flex-direction: column }" on specificity. */
+      .card.strip { flex-direction: row; align-items: center; gap: 16px; padding: 14px 16px; border-radius: var(--g-r-tile); }
       .soc-ring { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
       .soc-in { width: 36px; height: 36px; border-radius: 50%; background: var(--g-card); display: flex; align-items: center; justify-content: center; font-family: var(--g-display); font-size: 12px; font-weight: 700; }
       .strip-stats { flex: 1; display: flex; justify-content: space-between; gap: 8px; }
@@ -347,7 +348,7 @@ export class GlassEnergyCard extends LitElement implements LovelaceCard {
       .ss-v { font-family: var(--g-display); font-size: 16px; font-weight: 600; margin-top: 2px; }
 
       /* Compact energy mix bar */
-      .bar-card { gap: 12px; }
+      .card.bar-card { gap: 12px; padding: 16px; border-radius: var(--g-r-tile); }
       .bar-hdr { display: flex; align-items: center; justify-content: space-between; }
       .bar-status { font-size: 12px; font-weight: 700; color: var(--g-dim); }
       .bar-status.green { color: var(--g-green); }

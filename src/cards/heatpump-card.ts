@@ -6,6 +6,7 @@ import { glassBase, icon, placeholder } from '../theme/tokens';
 
 interface GlassHeatpumpCardConfig extends LovelaceCardConfig {
   entity: string; // climate.*
+  current_temp_entity?: string; // optional sensor.* for the actual/current temperature
   name?: string;
   subtitle?: string;
 }
@@ -43,11 +44,28 @@ export class GlassHeatpumpCard extends LitElement implements LovelaceCard {
     if (changed.has('_config')) return true;
     const old = changed.get('hass') as HomeAssistant | undefined;
     if (!old || !this.hass || !this._config) return true;
-    return old.states[this._config.entity] !== this.hass.states[this._config.entity];
+    if (old.states[this._config.entity] !== this.hass.states[this._config.entity]) return true;
+    const cte = this._config.current_temp_entity;
+    if (cte && old.states[cte] !== this.hass.states[cte]) return true;
+    return false;
   }
 
   private get _st() {
     return this._config!.entity ? this.hass!.states[this._config!.entity] : undefined;
+  }
+
+  // Actual/current temperature: prefer an explicit current_temp_entity, else fall
+  // back to the climate entity's current_temperature attribute.
+  private _currentTemp(): number | null {
+    const cte = this._config?.current_temp_entity;
+    if (cte) {
+      const s = this.hass?.states[cte];
+      const n = s ? Number(s.state) : NaN;
+      if (!Number.isNaN(n)) return n;
+    }
+    const a = this._st?.attributes;
+    const n = a?.current_temperature != null ? Number(a.current_temperature) : NaN;
+    return Number.isNaN(n) ? null : n;
   }
 
   private _step(dir: 1 | -1, e: Event): void {
@@ -85,6 +103,7 @@ export class GlassHeatpumpCard extends LitElement implements LovelaceCard {
     const meta = MODE_META[mode] ?? MODE_META.off;
     const name = this._config.name ?? (a.friendly_name as string) ?? 'Heat Pump';
     const target = a.temperature != null ? Number(a.temperature) : null;
+    const current = this._currentTemp();
     const min = Number(a.min_temp ?? 15);
     const max = Number(a.max_temp ?? 40);
     const pct = target != null ? Math.max(0, Math.min(100, ((target - min) / (max - min)) * 100)) : 0;
@@ -104,6 +123,7 @@ export class GlassHeatpumpCard extends LitElement implements LovelaceCard {
           <div class="ring" style="background:conic-gradient(${meta.color} 0 ${pct}%, rgba(255,255,255,0.07) ${pct}% 100%)">
             <div class="ring-in">
               <div class="t-num tv">${target ?? '—'}<span class="deg">°</span></div>
+              ${current != null ? html`<div class="cur">${icon('device_thermostat', 13, 'var(--g-dim)')}${current}°</div>` : nothing}
               <span class="pill" style="color:${meta.color}"><span class="dot" style="background:${meta.color}"></span>${action}</span>
             </div>
           </div>
@@ -137,6 +157,7 @@ export class GlassHeatpumpCard extends LitElement implements LovelaceCard {
       .ring-in { width: 98px; height: 98px; border-radius: 50%; background: var(--g-card); display: flex; flex-direction: column; align-items: center; justify-content: center; }
       .tv { font-size: 34px; font-weight: 600; }
       .deg { font-size: 15px; color: var(--g-dim); }
+      .cur { display: inline-flex; align-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--g-dim); margin-top: 1px; font-variant-numeric: tabular-nums; }
       .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--g-inset); margin-top: 5px; text-transform: capitalize; }
       .pill .dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
       .seg { display: flex; gap: 6px; background: var(--g-inset); padding: 5px; border-radius: 14px; }

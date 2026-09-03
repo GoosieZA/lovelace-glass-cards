@@ -159,6 +159,7 @@ const SCHEMAS: Record<string, Schema> = {
   ],
   'glass-heatpump-card': [
     { name: 'entity', required: true, selector: ent('climate') },
+    { name: 'current_temp_entity', selector: ent('sensor') },
     { name: 'name', selector: text },
     { name: 'subtitle', selector: text },
   ],
@@ -295,6 +296,7 @@ const LABELS: Record<string, string> = {
   level_max: 'Level bar maximum',
   power: 'Power switch (on/off)',
   current: 'Current temperature sensor',
+  current_temp_entity: 'Current temperature sensor (optional)',
   target: 'Target temperature (number / thermostat)',
   min_temp: 'Minimum temperature',
   max_temp: 'Maximum temperature',

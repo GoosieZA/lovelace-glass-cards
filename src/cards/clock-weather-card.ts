@@ -181,21 +181,21 @@ export class GlassClockWeatherCard extends LitElement implements LovelaceCard {
       .card { cursor: pointer; }
 
       /* Full / desktop hero */
-      .full { display: flex; align-items: center; gap: 30px; flex-wrap: wrap; }
-      .clock { flex: 1; min-width: 180px; }
+      .full { display: flex; align-items: center; gap: 30px; flex-wrap: nowrap; }
+      .clock { flex: 1 1 auto; min-width: 0; }
       .greeting { font-size: 14px; color: var(--g-dim); font-weight: 600; }
       .hhmm-row { display: flex; align-items: baseline; gap: 6px; margin-top: 2px; }
       .hhmm { font-family: var(--g-display); font-size: 60px; font-weight: 600; letter-spacing: -2px; line-height: 1; font-variant-numeric: tabular-nums; }
       .secs { font-family: var(--g-mono); font-size: 18px; color: var(--g-amber); }
       .date { font-size: 14px; color: var(--g-text); font-weight: 600; margin-top: 4px; }
 
-      .wx { flex: 0 0 auto; text-align: center; padding-left: 30px; border-left: 1px solid var(--g-border); }
+      .wx { flex: 0 0 auto; text-align: center; padding-left: 30px; border-left: 1px solid var(--g-border); white-space: nowrap; }
       .wx-temp { display: flex; align-items: flex-start; justify-content: center; font-family: var(--g-display); }
       .wx-num { font-size: 40px; font-weight: 600; line-height: 1; }
       .wx-unit { font-size: 16px; color: var(--g-dim); margin-top: 3px; }
       .wx-cond { font-size: 12px; color: var(--g-dim); margin-top: 2px; }
 
-      .fc { flex: 0 0 auto; display: flex; gap: 14px; padding-left: 26px; border-left: 1px solid var(--g-border); }
+      .fc { flex: 0 1 auto; display: flex; gap: 14px; padding-left: 26px; border-left: 1px solid var(--g-border); flex-wrap: wrap; }
       .fc-day { display: flex; flex-direction: column; align-items: center; gap: 6px; }
       .fc-lbl { font-size: 11px; color: var(--g-dim); font-weight: 700; }
       .fc-hi { font-size: 11px; font-weight: 700; }
